@@ -1,0 +1,5 @@
+tools:
+  fortune:
+    signature: "fortune"
+    docstring: "Print a short software-engineering proverb."
+    arguments: []

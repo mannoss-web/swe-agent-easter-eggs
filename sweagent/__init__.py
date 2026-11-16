@@ -102,7 +102,11 @@ def impose_rex_lower_bound() -> None:
 
 
 impose_rex_lower_bound()
-get_logger("swe-agent", emoji="👋").info(get_agent_version_info())
+_startup_logger = get_logger("swe-agent", emoji="👋")
+# Hidden Easter egg: SWEAGENT_PARTY=1 adds a festive startup banner.
+if os.environ.get("SWEAGENT_PARTY", "").strip().lower() in {"1", "true", "yes", "on"}:
+    _startup_logger.info("🎉 SWE-AGENT PARTY MODE 🎉  Let's fix some bugs and maybe dance a little. 🦖🤠")
+_startup_logger.info(get_agent_version_info())
 
 
 __all__ = [

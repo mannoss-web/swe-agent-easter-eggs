@@ -70,6 +70,17 @@ def get_cli():
 def main(args: list[str] | None = None):
     if args is None:
         args = sys.argv[1:]
+    # Hidden Easter eggs: handled before the public parser so they stay off --help.
+    if args and args[0] in {"dino", "rex"}:
+        from sweagent.run.easter_eggs import print_dino
+
+        print_dino()
+        return
+    if "--uuddlrlrba" in args:
+        from sweagent.run.easter_eggs import print_konami
+
+        print_konami()
+        sys.exit(0)
     cli = get_cli()
     parsed_args, remaining_args = cli.parse_known_args(args)  # type: ignore
     command = parsed_args.command
