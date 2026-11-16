@@ -101,6 +101,20 @@ def impose_rex_lower_bound() -> None:
         get_logger("swe-agent", emoji="👋").warning(msg)
 
 
+def _configure_output_if_needed() -> None:
+    """Enable UTF-8 stdio / Windows VT mode when the console would otherwise
+    choke on emoji (Easter eggs and startup logs). No-op on typical UTF-8
+    Linux and macOS terminals, so import behaviour there is unchanged.
+    """
+    encoding = (getattr(sys.stdout, "encoding", None) or "").lower().replace("-", "").replace("_", "")
+    if sys.platform != "win32" and encoding in {"utf8", "utf8sig", "cp65001"}:
+        return
+    from sweagent.run.easter_eggs import configure_output
+
+    configure_output()
+
+
+_configure_output_if_needed()
 impose_rex_lower_bound()
 _startup_logger = get_logger("swe-agent", emoji="👋")
 # Hidden Easter egg: SWEAGENT_PARTY=1 adds a festive startup banner.

@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 # Hidden SWE-agent Easter egg. Not enabled in default configs.
+# On Windows, or when bash is missing, use fortune.py / fortune.cmd instead.
+# Keep the proverb list in sync with fortune.py in this directory.
 set -euo pipefail
 
 proverbs=(
