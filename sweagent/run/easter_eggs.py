@@ -68,3 +68,29 @@ def print_castlevania() -> None:
     rich.print(f"[bold red]{_CASTLEVANIA_ART}[/bold red]")
     rich.print("[bold]Simon Belmont[/bold]  🦇")
     rich.print(f"[italic]{quip}[/italic]")
+
+
+# Powered-up scene: Konami code + Castlevania (Harmony of Dissonance unlocks Simon).
+_CASTLEVANIA_KONAMI_ART = r"""
+        ♥  ♥  ♥
+          ^v^
+                                                        ( )
+    \o/***=======D~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*~*~*    *
+     |                                                  '
+    / \
+"""
+
+_CASTLEVANIA_KONAMI_MESSAGE = """
+🎮  Cheat code accepted.
+
+    ↑ ↑ ↓ ↓ ← → ← → B A  —  Vampire Killer unlocked!
+
+    30 hearts added. Dracula's castle has no bugs left to hide.
+""".strip()
+
+
+def print_castlevania_konami() -> None:
+    """Print the powered-up Simon Belmont scene (Konami code + Castlevania)."""
+    rich.print(f"[bold yellow]{_CASTLEVANIA_KONAMI_ART}[/bold yellow]")
+    rich.print("[bold]Simon Belmont[/bold]  🦇  [yellow]Vampire Killer[/yellow]")
+    rich.print(f"[bold magenta]{_CASTLEVANIA_KONAMI_MESSAGE}[/bold magenta]")
