@@ -76,6 +76,11 @@ def main(args: list[str] | None = None):
 
         print_dino()
         return
+    if args and args[0] in {"castlevania", "belmont"}:
+        from sweagent.run.easter_eggs import print_castlevania
+
+        print_castlevania()
+        return
     if "--uuddlrlrba" in args:
         from sweagent.run.easter_eggs import print_konami
 

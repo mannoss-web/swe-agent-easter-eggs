@@ -42,6 +42,29 @@ def print_dino() -> None:
     rich.print(f"[italic]{quip}[/italic]")
 
 
+_CASTLEVANIA_ART = r"""
+          ^v^
+                                 ( )
+     o=======D~~~~~~~~~~~~~~*     '
+    /|
+    / \
+"""
+
+_CASTLEVANIA_QUIPS = (
+    "What is a man? A miserable little pile of bugs!",
+    "Die monster! You don't belong in this codebase!",
+    "The whip is mightier than the stack trace.",
+)
+
+
 def print_konami() -> None:
     """Print a Konami-code reward message."""
     rich.print(f"[bold magenta]{_KONAMI_MESSAGE}[/bold magenta]")
+
+
+def print_castlevania() -> None:
+    """Print a small Simon Belmont scene and a short quip."""
+    quip = random.choice(_CASTLEVANIA_QUIPS)
+    rich.print(f"[bold red]{_CASTLEVANIA_ART}[/bold red]")
+    rich.print("[bold]Simon Belmont[/bold]  🦇")
+    rich.print(f"[italic]{quip}[/italic]")
