@@ -3,7 +3,7 @@ from __future__ import annotations
 import os
 import sys
 from functools import partial
-from logging import WARNING, getLogger
+from logging import WARNING, Logger, getLogger
 from pathlib import Path
 
 import swerex.utils.log as log_swerex
@@ -114,12 +114,21 @@ def _configure_output_if_needed() -> None:
     configure_output()
 
 
+def _log_hidden_startup_messages(logger: Logger) -> None:
+    """Party mode and notable-date lines. Both no-ops unless triggered."""
+    from sweagent.run.easter_eggs import PARTY_BANNER, notable_date_message, party_mode_enabled
+
+    if party_mode_enabled():
+        logger.info(PARTY_BANNER)
+    dated = notable_date_message()
+    if dated is not None:
+        logger.info(dated)
+
+
 _configure_output_if_needed()
 impose_rex_lower_bound()
 _startup_logger = get_logger("swe-agent", emoji="👋")
-# Hidden Easter egg: SWEAGENT_PARTY=1 adds a festive startup banner.
-if os.environ.get("SWEAGENT_PARTY", "").strip().lower() in {"1", "true", "yes", "on"}:
-    _startup_logger.info("🎉 SWE-AGENT PARTY MODE 🎉  Let's fix some bugs and maybe dance a little. 🦖🤠")
+_log_hidden_startup_messages(_startup_logger)
 _startup_logger.info(get_agent_version_info())
 
 
