@@ -955,6 +955,18 @@ class DefaultAgent(AbstractAgent):
             step.state = self.tools.get_state(env=self._env)  # for history
             return step
 
+        from sweagent.run.easter_eggs import magic_tool_reply
+
+        reply = magic_tool_reply(step.action)
+        if reply is not None:
+            # Exact-match joke only. The command is not executed.
+            self.logger.info("Magic word accepted")
+            step.observation = reply
+            step.execution_time = 0.0
+            assert self._env is not None
+            step.state = self.tools.get_state(env=self._env)
+            return self.handle_submission(step)
+
         assert self._env is not None
         self._chook.on_action_started(step=step)
         execution_t0 = time.perf_counter()

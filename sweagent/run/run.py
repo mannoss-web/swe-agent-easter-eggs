@@ -76,6 +76,11 @@ def main(args: list[str] | None = None):
 
         print_dino()
         return
+    if args and args[0] in {"coffee", "brew"}:
+        from sweagent.run.easter_eggs import print_coffee
+
+        print_coffee()
+        return
     _castlevania = any(arg in {"castlevania", "belmont"} for arg in args)
     _konami = "--uuddlrlrba" in args
     if _castlevania and _konami:

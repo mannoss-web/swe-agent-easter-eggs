@@ -2,10 +2,13 @@
 
 from __future__ import annotations
 
+import logging
 import os
 import random
 import re
 import sys
+from collections.abc import Mapping
+from datetime import date
 
 import rich
 
@@ -18,6 +21,7 @@ _EMOJI_FALLBACKS = {
     "🎉": "!",
     "🤠": ":)",
     "👋": ":wave:",
+    "☕": "(coffee)",
     "↑": "^",
     "↓": "v",
     "←": "<",
@@ -188,3 +192,113 @@ def print_castlevania_konami() -> None:
     _egg_print(f"[bold yellow]{_CASTLEVANIA_KONAMI_ART}[/bold yellow]")
     _egg_print("[bold]Simon Belmont[/bold]  🦇  [yellow]Vampire Killer[/yellow]")
     _egg_print(f"[bold magenta]{_CASTLEVANIA_KONAMI_MESSAGE}[/bold magenta]")
+
+
+_COFFEE_ART = r"""
+      )  (
+     (   ) )
+      ) ( (
+    _______)_
+ .-'---------|
+( C|         |
+ '-|         |
+   '_________'
+    '-------'
+"""
+
+_COFFEE_QUOTES = (
+    "The bug was no match for a fresh cup.",
+    "One cup for the code, one for the tests.",
+    "Brewed, not stirred.",
+)
+
+
+def print_coffee() -> None:
+    """Print a cup of coffee and a short quote."""
+    quote = random.choice(_COFFEE_QUOTES)
+    _egg_print(f"[bold yellow]{_COFFEE_ART}[/bold yellow]")
+    _egg_print("[bold]SWE-agent coffee[/bold]  ☕")
+    _egg_print(f"[italic]{quote}[/italic]")
+
+
+_PARTY_TRUTHY = {"1", "true", "yes", "on"}
+PARTY_BANNER = "🎉 SWE-AGENT PARTY MODE 🎉  Let's fix some bugs and maybe dance a little. 🦖🤠"
+
+# Month, day -> one startup line. Logged only; never written into a trajectory.
+_NOTABLE_DATES: dict[tuple[int, int], str] = {
+    (3, 14): "Pi day. May your patches be as well-rounded as 3.14159.",
+    (4, 1): "April 1st. All bugs reported today are features. Probably.",
+    (5, 6): "Happy birthday to the SWE-agent paper (6 May 2024). The interface was the lever.",
+}
+
+# About one finished run in a hundred. A private RNG is used so this never
+# advances the process-wide random stream (batch shuffling uses that).
+FORTUNE_PROBABILITY = 0.01
+_RUN_FORTUNES = (
+    "Read the traceback from the bottom.",
+    "A failing test is a breadcrumb, not an insult.",
+    "The container is fine. The assumption was not.",
+    "Smaller diff, happier reviewer.",
+    "If you cannot explain the patch, do not submit it yet.",
+)
+
+# Exact agent actions only. Anything else, including a prefix or extra command, is ignored.
+_MAGIC_REPLIES = {
+    "sudo make me a sandwich": "What? Make it yourself.",
+    "sudo make me a sandwich --please": "Okay.",
+    "open the pod bay doors": "I'm sorry, Dave. I'm afraid I can't do that.",
+}
+
+
+def party_mode_enabled(environ: Mapping[str, str] | None = None) -> bool:
+    """True when SWEAGENT_PARTY or SWE_AGENT_PARTY is set to a truthy value."""
+    env = os.environ if environ is None else environ
+    for name in ("SWEAGENT_PARTY", "SWE_AGENT_PARTY"):
+        if env.get(name, "").strip().lower() in _PARTY_TRUTHY:
+            return True
+    return False
+
+
+def notable_date_message(today: date | None = None) -> str | None:
+    """Return a one-line greeting on Pi day, April 1st, or 6 May, else None."""
+    current = date.today() if today is None else today
+    return _NOTABLE_DATES.get((current.month, current.day))
+
+
+def rare_fortune(
+    rng: random.Random | None = None,
+    *,
+    probability: float = FORTUNE_PROBABILITY,
+) -> str | None:
+    """Return a fortune with `probability`, otherwise None.
+
+    Pass an rng in tests. The default roller is a fresh `random.Random()`,
+    which does not touch the global random state.
+    """
+    roller = random.Random() if rng is None else rng
+    if roller.random() >= probability:
+        return None
+    return roller.choice(_RUN_FORTUNES)
+
+
+def log_rare_fortune(logger: logging.Logger) -> None:
+    """Maybe log one fortune after a run has already been saved.
+
+    Skipped under pytest so the suite stays deterministic. `SWE_AGENT_FORTUNE=1`
+    forces a line; `0` silences it. The line is log-only and is not written
+    into trajectories, predictions, or model prompts.
+    """
+    if os.environ.get("PYTEST_CURRENT_TEST"):
+        return
+    forced = os.environ.get("SWE_AGENT_FORTUNE", "").strip().lower()
+    if forced in {"0", "false", "no", "off"}:
+        return
+    probability = 1.0 if forced in _PARTY_TRUTHY else FORTUNE_PROBABILITY
+    line = rare_fortune(probability=probability)
+    if line:
+        logger.info("Fortune: %s", line)
+
+
+def magic_tool_reply(action: str) -> str | None:
+    """Playful observation for one exact action, or None for everything else."""
+    return _MAGIC_REPLIES.get(action.strip())

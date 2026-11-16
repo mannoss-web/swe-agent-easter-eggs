@@ -252,6 +252,9 @@ class RunBatch:
         merge_predictions(output_dirs, self.output_dir / "preds.json")
 
         self._chooks.on_end()
+        from sweagent.run.easter_eggs import log_rare_fortune
+
+        log_rare_fortune(self.logger)
 
     def main_single_worker(self) -> None:
         with ExitStack() as stack:

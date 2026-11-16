@@ -205,6 +205,9 @@ class RunSingle:
         self._chooks.on_end()
         save_predictions(self.output_dir, self.problem_statement.id, result)
         self.env.close()
+        from sweagent.run.easter_eggs import log_rare_fortune
+
+        log_rare_fortune(self.logger)
 
 
 def run_from_config(config: RunSingleConfig):

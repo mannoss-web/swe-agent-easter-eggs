@@ -116,6 +116,7 @@ nav:
       - "Agent class": "reference/agent.md"
       - "Environment class": "reference/env.md"
       - "Exceptions": "reference/exceptions.md"
+  - "Easter eggs (spoilers)": "easter_eggs.md"
 plugins:
   - glightbox
   - search
