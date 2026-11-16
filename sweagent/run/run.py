@@ -97,7 +97,7 @@ def main(args: list[str] | None = None):
         from sweagent.run.easter_eggs import print_konami
 
         print_konami()
-        sys.exit(0)
+        return
     cli = get_cli()
     parsed_args, remaining_args = cli.parse_known_args(args)  # type: ignore
     command = parsed_args.command
